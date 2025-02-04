@@ -1,5 +1,5 @@
 #include <stdlib.h>
-int	ft_strlen(char *str)
+static int	ft_strlen(char *str)
 {
 	int	i;
 
@@ -8,50 +8,56 @@ int	ft_strlen(char *str)
 		i++;
 	return (i);
 }
-char	*ft_strcat(char *dst, char *src)
+static char	*ft_strcat(char *s1, char *s2)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (dst[i] != '\0')
+	while (s1[i] != '\0')
 		i++;
 	j = 0;
-	while (src[j] != '\0')
+	while (s2[j] !='\0')
 	{
-		dst[i] = src[j];
+		s1[i] = s2[j];
 		i++;
 		j++;
 	}
-	dst[i] ='\0';
-	return (dst);
+	s1[i] = '\0';
+	return (s1);
 }
 char	*ft_strjoin(int size, char **strs, char *sep)
 {
-	int	i;
-	int	len;
 	char	*result;
+	int	i;
+	unsigned int	totlen;
+	unsigned int	len;
 
-	if (size == 0)
-		return (NULL);
+	if (size == 0 || strs == NULL)
+		return (0);
+	totlen = 0;
 	i = 0;
 	while (i < size)
 	{
-		len = len + ft_strlen(strs[i]);
-		if (i < size - 1)
-			len = len + ft_strlen(sep);
+		totlen += ft_strlen(strs[i]);
 		i++;
 	}
-	result = malloc((len + 1) * sizeof(char));
-	if (result == NULL)
+	totlen += size - 1;/* add the separator */
+	totlen += 1;/* terminator '\0' */
+	result = (char *)malloc(totlen * sizeof(char));
+	if (!result)
 		return (NULL);
-	result[0] = '\0';/* initialize */
+	result[0] = '\0';
 	i = 0;
 	while (i < size)
 	{
 		ft_strcat(result, strs[i]);
 		if (i < size - 1)
+		{
+			len = ft_strlen(result);
 			ft_strcat(result, sep);
+			result[len + 1] = '\0';
+		}
 		i++;
 	}
 	return (result);
@@ -59,11 +65,16 @@ char	*ft_strjoin(int size, char **strs, char *sep)
 #include <stdio.h>
 int	main()
 {
-	char	*strs[] = {"hello", "world", "que", "tal", "yufeng"};
-	char	*sep = " ";
-	char	*result = ft_strjoin(5, strs, sep);
-
-	printf("%s\n", result);
-	free(result);
+	char *strs[] = {"Hola", "mundo", "soy", "Yufeng"};
+	int size = 4;
+	char *sep = " ";
+	char *result = ft_strjoin(size, strs, sep);
+	if (result)
+	{
+		printf("%s\n", result);
+		free(result);
+	}
+	else
+		printf("memory allocation failed.\n");
 	return (0);
 }
